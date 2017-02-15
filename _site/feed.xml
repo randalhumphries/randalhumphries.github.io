@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>randal humphries - ruby developer</title>
+    <description></description>
+    <link>/</link>
+    <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Tue, 14 Feb 2017 21:44:04 -0500</pubDate>
+    <lastBuildDate>Tue, 14 Feb 2017 21:44:04 -0500</lastBuildDate>
+    <generator>Jekyll v3.4.0</generator>
+    
+      <item>
+        <title>Chicken Soup for the Newbie's Soul</title>
+        <description>&lt;p class=&quot;music-read&quot;&gt;&lt;a href=&quot;spotify:user:spotify:playlist:67nMZWgcUxNa5uaiyLDR2x&quot;&gt;Music for reading(spotify)&lt;/a&gt;&lt;/p&gt; &lt;p&gt;&lt;img src=&quot;../img/posts/chickensoup.jpeg&quot; /&gt;&lt;/p&gt; &lt;p&gt;I’ve been coding off an on since I was 12. First with HTML and JavaScript in the early, ugly, static days of the Internet (remember GeoCities?). A few years into my tech career (circa 2004) I got into PHP. About two years ago, I rediscovered my love for coding and, shortly after, got involved with Ruby and Ruby on Rails.&lt;/p&gt; &lt;p&gt;The thing to take away from all that is I’m self-taught. There seems to be a perception that you can’t be a developer because you didn’t get a Computer Science degree, finish...</description>
+        <pubDate>Fri, 27 Jan 2017 04:00:00 -0500</pubDate>
+        <link>/chickensoup/</link>
+        <guid isPermaLink="true">/chickensoup/</guid>
+        
+        <category>coding</category>
+        
+        <category>newbie</category>
+        
+        <category>tips</category>
+        
+        <category>development</category>
+        
+        
+        <category>development</category>
+        
+        <category>thoughts</category>
+        
+      </item>
+    
+      <item>
+        <title>Creatively Lazy, Pt. 2</title>
+        <description>&lt;p class=&quot;music-read&quot;&gt;&lt;a href=&quot;spotify:user:bhuga:playlist:2Vch7gKXQ3G6g3LKfilIhn&quot;&gt;Music for reading(spotify)&lt;/a&gt;&lt;/p&gt; &lt;p&gt;&lt;img src=&quot;../img/posts/lazy02.jpeg&quot; /&gt;&lt;/p&gt; &lt;p&gt;In my last post, I talked about the first two steps of a project I recently undertook to automate a painfully repetitive task. To summarize, I needed to search the NPI Registry for all the practices, physicians, physician assistants, and nurse practitioners in a zip code and save it as a CSV. Last time, I talked about creating the connection to the NPI Registry’s API and submitting the query to it. Let’s go ahead and get into how to deal with the results the API returns. The source code can be found...</description>
+        <pubDate>Wed, 25 Jan 2017 04:00:00 -0500</pubDate>
+        <link>/lazy02/</link>
+        <guid isPermaLink="true">/lazy02/</guid>
+        
+        <category>coding</category>
+        
+        <category>ruby</category>
+        
+        
+        <category>development</category>
+        
+      </item>
+    
+      <item>
+        <title>Creatively Lazy, Pt. 1</title>
+        <description>&lt;p class=&quot;music-read&quot;&gt;&lt;a href=&quot;spotify:album:5Xkt4IUsscIzafjELgCAJS&quot;&gt;Music for reading(spotify)&lt;/a&gt;&lt;/p&gt; &lt;p&gt;&lt;img src=&quot;../img/posts/lazy01.jpeg&quot; /&gt;&lt;/p&gt; &lt;p&gt;Perhaps I’m coo-coo, banana pants crazy but I’m perfectly willing to spend an hour automating a repetitive 10-minute task. At my previous job (Seimitsu), we called this being “creatively lazy”. “Randal,” I hear you say, “isn’t that a waste of time?” Well, that depends on your answer to this question: “Will anyone ever have to perform that 10-minute task again?” If the answer is “yes” then it’s not a waste of time in the slightest to the poor soul asked to spend that 10 minutes God know how many times until they...</description>
+        <pubDate>Mon, 23 Jan 2017 04:00:00 -0500</pubDate>
+        <link>/lazy01/</link>
+        <guid isPermaLink="true">/lazy01/</guid>
+        
+        <category>coding</category>
+        
+        <category>ruby</category>
+        
+        
+        <category>development</category>
+        
+      </item>
+    
+  </channel>
+</rss>
