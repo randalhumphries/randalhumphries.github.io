@@ -225,11 +225,11 @@
             <article role="article" id="scroll" class="post-content" itemprop="articleBody">
                 <p class="music-read"><a href="spotify:user:bhuga:playlist:2Vch7gKXQ3G6g3LKfilIhn">Music for reading(spotify)</a></p>
 
-<p><img src="../img/posts/lazy02.jpeg" /></p>
+<p><img src="../assets/img/posts/lazy02.jpeg" /></p>
 
-<p>In my last post, I talked about the first two steps of a project I recently undertook to automate a painfully repetitive task. To summarize, I needed to search the NPI Registry for all the practices, physicians, physician assistants, and nurse practitioners in a zip code and save it as a CSV. Last time, I talked about creating the connection to the NPI Registry’s API and submitting the query to it. Let’s go ahead and get into how to deal with the results the API returns. The source code can be found in my GitHub.</p>
+<p>In my <a href="http://randalhumphries.com/2017/01/creatively-lazy-pt-1.html">last post</a>, I talked about the first two steps of a project I recently undertook to automate a painfully repetitive task. To summarize, I needed to search the <a href="https://npiregistry.cms.hhs.gov/">NPI Registry</a> for all the practices, physicians, physician assistants, and nurse practitioners in a zip code and save it as a CSV. Last time, I talked about creating the connection to the NPI Registry’s API and submitting the query to it. Let’s go ahead and get into how to deal with the results the API returns. The source code can be found in my <a href="https://github.com/randalhumphries/npi_registry_download">GitHub</a>.</p>
 
-<p>Step 3: Process the API’s Response</p>
+<h2 id="step-3-process-the-apis-response">Step 3: Process the API’s Response</h2>
 
 <p>This part actually happens in two parts. First get the results and put them in the format I need them to be in. But there’s a problem, of course.</p>
 
@@ -273,162 +273,140 @@
 </code></pre>
 </div>
 
-<p>There are a few things the get_results method does right up top. It creates the @result_count and @results instance variables. @result_count is a simple instance variable that is assigned to the integer 0. @results is created as an empty array. We’ll talk about both of these again in a minute. The other thing it does is call self.query and assign the hash is returns to the json_response variable. See the last post for the “dets” on the self.query method call.</p>
+<p>There are a few things the <code class="highlighter-rouge">get_results</code> method does right up top. It creates the <code class="highlighter-rouge">@result_count</code> and <code class="highlighter-rouge">@results</code> instance variables. <code class="highlighter-rouge">@result_count</code> is a simple instance variable that is assigned to the integer 0. <code class="highlighter-rouge">@results</code> is created as an empty array. We’ll talk about both of these again in a minute. The other thing it does is call <code class="highlighter-rouge">self.query</code> and assign the hash is returns to the <code class="highlighter-rouge">json_response</code> variable. See the <a href="http://randalhumphries.com/2017/01/creatively-lazy-pt-1.html">last post</a> for the “dets” on the <code class="highlighter-rouge">self.query</code> method call.</p>
 
-<p>You’ll notice that the condition for the “while” loop is simply true. Because true is always, well… true, I’m intentionally creating an infinite loop. The “if” condition checks the result_count value of the json_response hash before proceeding. If its value is 0, it exits the “while” loop, prints the specified string to the console (identified by the puts keyword), and returns the @results array.</p>
+<p>You’ll notice that the condition for the <code class="highlighter-rouge">while</code> loop is simply true. Because true is always, well… true, I’m intentionally creating an infinite loop. The <code class="highlighter-rouge">if</code> condition checks the <code class="highlighter-rouge">result_count</code> value of the <code class="highlighter-rouge">json_response</code> hash before proceeding. If its value is 0, it exits the <code class="highlighter-rouge">while</code> loop, prints the specified string to the console (identified by the <code class="highlighter-rouge">puts</code> keyword), and returns the <code class="highlighter-rouge">@results</code> array.</p>
 
-<p>If the value of result_count of the json_response hash is not 0, then it proceeds with the “while” loop. “What’s the ‘while’ loop doing,” you innocently wonder. Well, a few things.</p>
+<p>If the value of <code class="highlighter-rouge">result_count</code> of the <code class="highlighter-rouge">json_response</code> hash is not 0, then it proceeds with the <code class="highlighter-rouge">while</code> loop. “What’s the <code class="highlighter-rouge">while</code> loop doing,” you innocently wonder. Well, a few things.</p>
 
-<p>First, it adds the value of the result_count key of the json_response hash of the value of @result_count (which is 0 at the start). This is used to track the number of results we’ve gathered at this point in the method’s execution. This will come up again in a minute.</p>
+<p>First, it adds the value of the <code class="highlighter-rouge">result_count</code> key of the <code class="highlighter-rouge">json_response</code> hash of the value of <code class="highlighter-rouge">@result_count</code> (which is 0 at the start). This is used to track the number of results we’ve gathered at this point in the method’s execution. This will come up again in a minute.</p>
 
-<p>Next, the loop appends the value of the json_response hash to the end of the @results array that’s created when the get_results method is first called.</p>
+<p>Next, the loop appends the value of the <code class="highlighter-rouge">json_response</code> hash to the end of the <code class="highlighter-rouge">@results</code> array that’s created when the <code class="highlighter-rouge">get_results</code> method is first called.</p>
 
-<p>Then, the value of the skip attr_accessor is set to the value of @result_count. I told you we’d come back to this. The skip attr_accessor is used to tell the API to skip the first however many results to the submitted query. This is the crux of the solution I devised to the “how many total results” problem.</p>
+<p>Then, the value of the <code class="highlighter-rouge">skip</code> attr_accessor is set to the value of <code class="highlighter-rouge">@result_count</code>. I told you we’d come back to this. The <code class="highlighter-rouge">skip</code> attr_accessor is used to tell the API to skip the first however many results to the submitted query. This is the crux of the solution I devised to the “how many total results” problem.</p>
 
-<p>Finally, the loop calls self.query again (with the new skip value), prints an “#” to the screen (as a sort of progress bar for the user), and the whole Rube Goldberg machine begins again.</p>
+<p>Finally, the loop calls <code class="highlighter-rouge">self.query</code> again (with the new skip value), prints an “#” (it’s called an “octothorpe”, by the way) to the screen (as a sort of progress bar for the user), and the whole Rube Goldberg machine begins again.</p>
 
-<p>As the “if” condition implies, the “while” loop will perform this  sequence of events until the number of returned results is 0. This effectively (and quickly) gets all the results matching the specified criteria and returns the @results array.</p>
+<p>As the <code class="highlighter-rouge">if</code> condition implies, the <code class="highlighter-rouge">while</code> loop will perform this sequence of events until the number of returned results is 0. This effectively (and quickly) gets all the results matching the specified criteria and returns the <code class="highlighter-rouge">@results</code> array.</p>
 
-<p>So now I had the search results from the API but I still had to get them into a CSV. There’s a method for that two, buddy. The build_results_hash method below looks a bit complicated but honestly isn’t.</p>
+<p>So now I had the search results from the API but I still had to get them into a CSV. There’s a method for that two, buddy. The <code class="highlighter-rouge">build_results_hash</code> method below looks a bit complicated but honestly isn’t.</p>
 
-<p>def build_results_hash(results)</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">build_results_hash</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>@npi_array = []
+    <span class="vi">@npi_array</span> <span class="o">=</span> <span class="p">[]</span>
 
-results.each do |result|
+    <span class="n">results</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">result</span><span class="o">|</span>
 
-  result.each do |nested_result|
+      <span class="n">result</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">nested_result</span><span class="o">|</span>
 
-    @npi_hash = {}
+        <span class="vi">@npi_hash</span> <span class="o">=</span> <span class="p">{}</span>
 
-    @npi_hash['npi'] = nested_result['number']
-    @npi_hash['last_updated'] = nested_result['basic']['last_updated']
-    @npi_hash['status'] = nested_result['basic']['status']
-    @npi_hash['credential'] = nested_result['basic']['credential']
-    @npi_hash['first_name'] = nested_result['basic']['first_name']
-    @npi_hash['middle_name'] = nested_result['basic']['middle_name']
-    @npi_hash['last_name'] = nested_result['basic']['last_name']
-    @npi_hash['name'] = nested_result['basic']['name']
-    @npi_hash['gender'] = nested_result['basic']['gender']
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'npi'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'number'</span><span class="p">]</span>
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'last_updated'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'basic'</span><span class="p">][</span><span class="s1">'last_updated'</span><span class="p">]</span>
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'basic'</span><span class="p">][</span><span class="s1">'status'</span><span class="p">]</span>
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'credential'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'basic'</span><span class="p">][</span><span class="s1">'credential'</span><span class="p">]</span>
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'first_name'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'basic'</span><span class="p">][</span><span class="s1">'first_name'</span><span class="p">]</span>
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'middle_name'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'basic'</span><span class="p">][</span><span class="s1">'middle_name'</span><span class="p">]</span>
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'last_name'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'basic'</span><span class="p">][</span><span class="s1">'last_name'</span><span class="p">]</span>
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'basic'</span><span class="p">][</span><span class="s1">'name'</span><span class="p">]</span>
+        <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'gender'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nested_result</span><span class="p">[</span><span class="s1">'basic'</span><span class="p">][</span><span class="s1">'gender'</span><span class="p">]</span>
 
-    nested_result['addresses'].each do |address|
+        <span class="n">nested_result</span><span class="p">[</span><span class="s1">'addresses'</span><span class="p">].</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">address</span><span class="o">|</span>
 
-      address['address_purpose'] == "LOCATION" ? key_prefix = 'location_' : key_prefix = 'mailing_'
+          <span class="n">address</span><span class="p">[</span><span class="s1">'address_purpose'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"LOCATION"</span> <span class="p">?</span> <span class="n">key_prefix</span> <span class="o">=</span> <span class="s1">'location_'</span> <span class="p">:</span> <span class="n">key_prefix</span> <span class="o">=</span> <span class="s1">'mailing_'</span>
 
-      @npi_hash["#{key_prefix}telephone_number"] = address['telephone_number']
-      @npi_hash["#{key_prefix}fax_number"] = address['fax_number']
-      @npi_hash["#{key_prefix}address_1"] = address['address_1']
-      @npi_hash["#{key_prefix}address_2"] = address['address_2']
-      @npi_hash["#{key_prefix}city"] = address['city']
-      @npi_hash["#{key_prefix}state"] = address['state']
-      @npi_hash["#{key_prefix}postal_code"] = address['postal_code']
-    
-    end
+          <span class="vi">@npi_hash</span><span class="p">[</span><span class="s2">"</span><span class="si">#{</span><span class="n">key_prefix</span><span class="si">}</span><span class="s2">telephone_number"</span><span class="p">]</span> <span class="o">=</span> <span class="n">address</span><span class="p">[</span><span class="s1">'telephone_number'</span><span class="p">]</span>
+          <span class="vi">@npi_hash</span><span class="p">[</span><span class="s2">"</span><span class="si">#{</span><span class="n">key_prefix</span><span class="si">}</span><span class="s2">fax_number"</span><span class="p">]</span> <span class="o">=</span> <span class="n">address</span><span class="p">[</span><span class="s1">'fax_number'</span><span class="p">]</span>
+          <span class="vi">@npi_hash</span><span class="p">[</span><span class="s2">"</span><span class="si">#{</span><span class="n">key_prefix</span><span class="si">}</span><span class="s2">address_1"</span><span class="p">]</span> <span class="o">=</span> <span class="n">address</span><span class="p">[</span><span class="s1">'address_1'</span><span class="p">]</span>
+          <span class="vi">@npi_hash</span><span class="p">[</span><span class="s2">"</span><span class="si">#{</span><span class="n">key_prefix</span><span class="si">}</span><span class="s2">address_2"</span><span class="p">]</span> <span class="o">=</span> <span class="n">address</span><span class="p">[</span><span class="s1">'address_2'</span><span class="p">]</span>
+          <span class="vi">@npi_hash</span><span class="p">[</span><span class="s2">"</span><span class="si">#{</span><span class="n">key_prefix</span><span class="si">}</span><span class="s2">city"</span><span class="p">]</span> <span class="o">=</span> <span class="n">address</span><span class="p">[</span><span class="s1">'city'</span><span class="p">]</span>
+          <span class="vi">@npi_hash</span><span class="p">[</span><span class="s2">"</span><span class="si">#{</span><span class="n">key_prefix</span><span class="si">}</span><span class="s2">state"</span><span class="p">]</span> <span class="o">=</span> <span class="n">address</span><span class="p">[</span><span class="s1">'state'</span><span class="p">]</span>
+          <span class="vi">@npi_hash</span><span class="p">[</span><span class="s2">"</span><span class="si">#{</span><span class="n">key_prefix</span><span class="si">}</span><span class="s2">postal_code"</span><span class="p">]</span> <span class="o">=</span> <span class="n">address</span><span class="p">[</span><span class="s1">'postal_code'</span><span class="p">]</span>
+        
+        <span class="k">end</span>
 
-    nested_result['taxonomies'].each do |taxonomy|
+        <span class="n">nested_result</span><span class="p">[</span><span class="s1">'taxonomies'</span><span class="p">].</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">taxonomy</span><span class="o">|</span>
 
-      if taxonomy['primary'] == true
+          <span class="k">if</span> <span class="n">taxonomy</span><span class="p">[</span><span class="s1">'primary'</span><span class="p">]</span> <span class="o">==</span> <span class="kp">true</span>
 
-        @npi_hash['taxonomy_code'] = taxonomy['code']
-        @npi_hash['taxonomy_description'] = taxonomy['desc']
+            <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'taxonomy_code'</span><span class="p">]</span> <span class="o">=</span> <span class="n">taxonomy</span><span class="p">[</span><span class="s1">'code'</span><span class="p">]</span>
+            <span class="vi">@npi_hash</span><span class="p">[</span><span class="s1">'taxonomy_description'</span><span class="p">]</span> <span class="o">=</span> <span class="n">taxonomy</span><span class="p">[</span><span class="s1">'desc'</span><span class="p">]</span>
 
-      end
+          <span class="k">end</span>
 
-      @npi_array.push(@npi_hash)
-    
-    end
+          <span class="vi">@npi_array</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="vi">@npi_hash</span><span class="p">)</span>
+        
+        <span class="k">end</span>
 
-  end
+      <span class="k">end</span>
 
-end
+    <span class="k">end</span>
 
-return @npi_array.uniq! { |value| value['npi'] }
+    <span class="k">return</span> <span class="vi">@npi_array</span><span class="p">.</span><span class="nf">uniq!</span> <span class="p">{</span> <span class="o">|</span><span class="n">value</span><span class="o">|</span> <span class="n">value</span><span class="p">[</span><span class="s1">'npi'</span><span class="p">]</span> <span class="p">}</span>
+
+  <span class="k">end</span>
 </code></pre>
 </div>
 
-<p>end</p>
+<p>Essentially, it creates an empty array (<code class="highlighter-rouge">@npi_array</code>), creates an empty hash (<code class="highlighter-rouge">@npi_hash</code>), gets the desired values out of the results hash that’s passed to it, and appends the <code class="highlighter-rouge">@npi_hash</code> to the end of the <code class="highlighter-rouge">@npi_array</code>. The <code class="highlighter-rouge">@npi_arrary.uniq! { |value| value['npi'] }</code> line is simply removing any duplicate values in the <code class="highlighter-rouge">@npi_array</code>.</p>
 
-<table>
-  <tbody>
-    <tr>
-      <td>Essentially, it creates an empty array (@npi_array), creates an empty hash (@npi_hash), gets the desired values out of the results hash that’s passed to it, and appends the @npi_hash to the end of the @npi_array. The @npi_arrary.uniq! {</td>
-      <td>value</td>
-      <td>value[‘npi’] } line is simply removing any duplicate values in the @npi_array.</td>
-    </tr>
-  </tbody>
-</table>
+<p>This methods looks a bit whacky (refactor, anyone?) but it’s honestly not that complicated. Now to get <code class="highlighter-rouge">@npi_array</code> into a CSV.</p>
 
-<p>This methods looks a bit whacky (refactor, anyone?) but it’s honestly not that complicated. Now to get @npi_array into a CSV.</p>
+<h2 id="step-4-save-that-csv">Step 4: Save that CSV!</h2>
 
-<p>Step 4: Save that CSV!</p>
+<p>We’re in the home stretch, kids! For my purposes, I decided to create a second file to do all the user interaction and actually save the results to the CSV. Again, the source code can be found in my <a href="https://github.com/randalhumphries/npi_registry_download">GitHub</a>. I won’t bore you with the user interaction stuff so we’ll get right to the CSV business.</p>
 
-<p>We’re in the home stretch, kids! For my purposes, I decided to create a second file to do all the user interaction and actually save the results to the CSV. Again, the source code can be found in my GitHub. I won’t bore you with the user interaction stuff so we’ll get right to the CSV business.</p>
+<p>Like <code class="highlighter-rouge">Net::HTTP</code> and <code class="highlighter-rouge">JSON</code>, there’s a library for the CSV format. And like the other libraries I discussed, it can be included with the line below at the top of your code.</p>
 
-<p>Like Net::HTTP and JSON, there’s a library for the CSV format. And like the other libraries I discussed, it can be included with the line below at the top of your code.</p>
-
-<p>require ‘csv’</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'csv'</span>
+</code></pre>
+</div>
 
 <p>Below is the snippet of the new Ruby file that’s the business end of the CSV action.</p>
 
-<p>print “Enter the full path to the destination CSV file: “</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">print</span> <span class="s2">"Enter the full path to the destination CSV file: "</span>
 
-<p>filename = gets.chomp</p>
+<span class="n">filename</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span>
 
-<table>
-  <tbody>
-    <tr>
-      <td>CSV.open(filename, “w”) do</td>
-      <td>csv_file</td>
-    </tr>
-  </tbody>
-</table>
+<span class="no">CSV</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">csv_file</span><span class="o">|</span>
 
-<p>puts “Saving results to the specified file. Please wait…\n”</p>
+  <span class="nb">puts</span> <span class="s2">"Saving results to the specified file. Please wait...</span><span class="se">\n</span><span class="s2">"</span>
 
-<p>sleep(0.5)</p>
+  <span class="nb">sleep</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
 
-<p>csv_file « @search_results.first.keys</p>
+  <span class="n">csv_file</span> <span class="o">&lt;&lt;</span> <span class="vi">@search_results</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">keys</span>
 
-<table>
-  <tbody>
-    <tr>
-      <td>@search_results.each do</td>
-      <td>hash</td>
-    </tr>
-  </tbody>
-</table>
+  <span class="vi">@search_results</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="o">|</span>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>csv_file &lt;&lt; hash.values
+    <span class="n">csv_file</span> <span class="o">&lt;&lt;</span> <span class="nb">hash</span><span class="p">.</span><span class="nf">values</span>
+
+  <span class="k">end</span>
+
+  <span class="nb">puts</span> <span class="s2">"Results successfully saved to '</span><span class="si">#{</span><span class="n">filename</span><span class="si">}</span><span class="s2">'."</span>
+
+<span class="k">end</span>
 </code></pre>
 </div>
 
-<p>end</p>
+<p>So what’s going on here. It asks the user to enter a filename to which the API will be saved. It then opens the specified file in “write” mode with the <code class="highlighter-rouge">CSV.open(filename, "w") do |csv_file|</code> line. It prints the following line to the console and pauses for 0.5 seconds.</p>
 
-<p>puts “Results successfully saved to ‘#{filename}’.”</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Saving</span> <span class="n">results</span> <span class="n">to</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">file</span><span class="o">.</span> <span class="no">Please</span> <span class="n">wait</span><span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+</code></pre>
+</div>
 
-<p>end</p>
+<p>After 0.5 seconds have passed, it iterates through the keys of the <code class="highlighter-rouge">@search_results</code> array (as it’s holding the contents of the <code class="highlighter-rouge">@npi_array</code>) and sets the headers of the CSV file. It then iterates through the values of the <code class="highlighter-rouge">@search_results</code> array and inserts each value into the file. After writing the last value found in the “@search_results” array, it saves and closes the file. It then prints the following line to the console.</p>
 
-<table>
-  <tbody>
-    <tr>
-      <td>So what’s going on here. It asks the user to enter a filename to which the API will be saved. It then opens the specified file in “write” mode with the CSV.open(filename, “w”) do</td>
-      <td>csv_file</td>
-      <td>line. It prints the following line to the console and pauses for 0.5 seconds.</td>
-    </tr>
-  </tbody>
-</table>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="s2">"Results successfully saved to '</span><span class="si">#{</span><span class="n">filename</span><span class="si">}</span><span class="s2">'."</span>
+</code></pre>
+</div>
 
-<p>Saving results to the specified file. Please wait…
-After 0.5 seconds have passed, it iterates through the keys of the @search_results  array (as it’s holding the contents of the @npi_array) and sets the headers of the CSV file. It then iterates through the values of the @search_results array and inserts each value into the file. After writing the last value found in the @search_results array, it saves and closes the file. It then prints the following line to the console.</p>
+<p>From the user’s perspective this program asks for a zip code, searches the API, asks for a filename for their new CSV, and saves it. Easy, cheesy…</p>
 
-<p>“Results successfully saved to ‘#{filename}’.”
-From the user’s perspective this program asks for a zip code, searches the API, asks for a filename for their new CSV, and saves it. Easy, cheesy…</p>
-
-<p>The Take Away (Not the NPR Show)</p>
+<h2 id="the-take-away-not-the-npr-show">The Take Away (Not the NPR Show)</h2>
 
 <p>To underscore the point I made in the first paragraph of the last post, building and testing this program took about four hours or so. Was it more efficient then getting a person to do it? You betcha! In the four zip codes that concerned us it returned about 1400 results with all the data we cared about. I don’t have the first idea how long that would take a person to accomplish manually but I figure far more than it took to build this program. The program also has reusability. Now that it exists, I could search any given zip code (or any other available criteria with a bit of refactoring) in minutes.</p>
 
-<p>Leave a message below with any comments or questions or, conversely, hit me up on the Tweeters. Also coming soon(-ish): Streaming on Twitch!</p>
+<p>Leave a message below with any comments or questions or, conversely, hit me up on the <a href="https://twitter.com/randalmeister">Tweeters</a>. Also coming soon(-ish): Streaming on Twitch!</p>
 
 <p>Until next time, take care!</p>
 

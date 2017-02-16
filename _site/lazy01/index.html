@@ -225,74 +225,88 @@
             <article role="article" id="scroll" class="post-content" itemprop="articleBody">
                 <p class="music-read"><a href="spotify:album:5Xkt4IUsscIzafjELgCAJS">Music for reading(spotify)</a></p>
 
-<p><img src="../img/posts/lazy01.jpeg" /></p>
+<p><img src="../assets/img/posts/lazy01.jpeg" /></p>
 
-<p>Perhaps I’m coo-coo, banana pants crazy but I’m perfectly willing to spend an hour automating a repetitive 10-minute task. At my previous job (Seimitsu), we called this being “creatively lazy”. “Randal,” I hear you say, “isn’t that a waste of time?” Well, that depends on your answer to this question: “Will anyone ever have to perform that 10-minute task again?” If the answer is “yes” then it’s not a waste of time in the slightest to the poor soul asked to spend that 10 minutes God know how many times until they quit, retire, or die.</p>
+<p>Perhaps I’m coo-coo, banana pants crazy but I’m perfectly willing to spend an hour automating a repetitive 10-minute task. At my previous job (<a href="http://seimitsu.com">Seimitsu</a>), we called this being “creatively lazy”. “Randal,” I hear you say, “isn’t that a waste of time?” Well, that depends on your answer to this question: “Will anyone ever have to perform that 10-minute task again?” If the answer is “yes” then it’s not a waste of time in the slightest to the poor soul asked to spend that 10 minutes God know how many times until they quit, retire, or die.</p>
 
-<p>Let’s take a recent example from my current job (the names have been changed to protect the blah, blah, blah… Please don’t fire me!). For marketing purposes, we needed to know the names, addresses, and phone numbers of all of the medical practices, physicians, physician assistants, and nurse practitioners in and around given areas who might refer to our office. So did we forsake some unfortunate person to the drudgery of googling (or searching through phone books!) and manually compiling this information? By the Power of Greyskull, no! Off I went to solve this little problem with code.</p>
+<p>Let’s take a recent example from my current job (the names have been changed to protect the blah, blah, blah… Please don’t fire me!). For marketing purposes, we needed to know the names, addresses, and phone numbers of all of the medical practices, physicians, physician assistants, and nurse practitioners in and around given areas who might refer to our office. So did we forsake some unfortunate person to the drudgery of googling (or searching through <a href="https://en.wikipedia.org/wiki/Telephone_directory">phone books</a>!) and manually compiling this information? By the Power of Greyskull, no! Off I went to solve this little problem with code.</p>
 
 <p>The problem is simple enough: efficiently search for the required data and gather the results into some appropriate digital format. The format, in this specific case, is CSV because it will ultimately be used in marketing materials. The ability to sort, tabulate, and edit it in an application like Excel is preferred.</p>
 
-<p>The solution hinges on a two crucial bits of information. The first is that all the practices and practitioners in the US have to register for an NPI number with the federal department of Health and Human Services. The second is that this registry of NPI data is available online with a pretty well documented API. Understanding the problem and knowing these two crucial bits, work began. If you’d like to take a gander at the source code, you eager beaver, you can check it out on my GitHub.</p>
+<p>The solution hinges on a two crucial bits of information. The first is that all the practices and practitioners in the US have to register for an <a href="https://en.wikipedia.org/wiki/National_Provider_Identifier">NPI number</a> with the federal department of Health and Human Services. The second is that this registry of NPI data is available online with a pretty well documented API. Understanding the problem and knowing these two crucial bits, work began. If you’d like to take a gander at the source code, you eager beaver, you can check it out on my <a href="https://github.com/randalhumphries/npi_registry_download">GitHub</a>.</p>
 
 <h2 id="step-1-connect-to-the-api">Step 1: Connect to the API</h2>
 
-<p>Making HTTP connections in Ruby 2.x is made almost trivial by the Net::HTTP library. It’s really a whole topic unto itself but, simply put, the Net:HTTP allows you to connect to resources (like APIs) via the HTTP and HTTPS protocols. You can include it and all its tasty goodness into your project by requiring it at the top of your code.</p>
+<p>Making HTTP connections in Ruby 2.x is made almost trivial by the <a href="https://ruby-doc.org/stdlib-2.4.0/libdoc/net/http/rdoc/Net/HTTP.html">Net::HTTP</a> library. It’s really a whole topic unto itself but, simply put, the Net:HTTP allows you to connect to resources (like APIs) via the HTTP and HTTPS protocols. You can include it and all its tasty goodness into your project by requiring it at the top of your code.</p>
 
 <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 </code></pre>
 </div>
 
-<p>Making the connection happens in two parts: creating the URI (i.e. resource’s URL) to which you need to connect and then initiating the connection.</p>
+<p>Making the connection happens in two parts: creating the <a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier">URI</a> (i.e. resource’s URL) to which you need to connect and then initiating the connection.</p>
 
-<p>def build_uri</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">build_uri</span>
 
-<p>URI(
-“https://npiregistry.cms.hhs.gov/api/?”\
-“number=#{npi_number}”\
-“&amp;enumeration_type=#{enumeration_type}”\
-“&amp;taxonomy_description=#{taxonomy_description}”\
-“&amp;first_name=#{first_name}”\
-“&amp;last_name=#{last_name}”\
-“&amp;organization_name=#{organization_name}”\
-“&amp;address_purpose=#{address_purpose}”\
-“&amp;city=#{city}”\
-“&amp;state=#{state}”\
-“&amp;postal_code=#{postal_code}”\
-“&amp;country_code=#{country_code}”\
-“&amp;limit=#{limit}”\
-“&amp;skip=#{skip}”
-)</p>
+<span class="no">URI</span><span class="p">(</span>
+<span class="s2">"https://npiregistry.cms.hhs.gov/api/?"</span><span class="p">\</span>
+<span class="s2">"number=</span><span class="si">#{</span><span class="n">npi_number</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;enumeration_type=</span><span class="si">#{</span><span class="n">enumeration_type</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;taxonomy_description=</span><span class="si">#{</span><span class="n">taxonomy_description</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;first_name=</span><span class="si">#{</span><span class="n">first_name</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;last_name=</span><span class="si">#{</span><span class="n">last_name</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;organization_name=</span><span class="si">#{</span><span class="n">organization_name</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;address_purpose=</span><span class="si">#{</span><span class="n">address_purpose</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;city=</span><span class="si">#{</span><span class="n">city</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;state=</span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;postal_code=</span><span class="si">#{</span><span class="n">postal_code</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;country_code=</span><span class="si">#{</span><span class="n">country_code</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;limit=</span><span class="si">#{</span><span class="n">limit</span><span class="si">}</span><span class="s2">"</span><span class="p">\</span>
+<span class="s2">"&amp;skip=</span><span class="si">#{</span><span class="n">skip</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">)</span>
 
-<p>end
-I encapsulated the creation of the URI into a method. For my purposes, the URI method of the Net::HTTP library is simply being passed the NPI Registry’s API URL as a string. I broke the string up for better readability.</p>
-
-<p>You’ll likely notice the number=#{npi_number} lines in the URL. I defined each of the API’s available search criteria as an attr_accessor of my class (“NpiDownload”). Ruby’s attr_accessors are a deeper topic for a future post but defining the criteria this way meant any of the criteria could be set by a simple assignment like the following line.</p>
-
-<p>NpiDownload.postal_code = “11111”
-All that said, the build_uri method would return a URI object built from the following string.</p>
-
-<p>https://npiregistry.cms.hhs.gov/api/?number=&amp;enumeration_type=&amp;taxonomy_description=&amp;first_name=&amp;last_name=&amp;organization_name=&amp;address_purpose=&amp;city=&amp;state=&amp;postal_code=11111&amp;country_code=&amp;limit=&amp;skip=
-Now that we had our URI object, it could be used to make the connection and deal with whatever the API returned.</p>
-
-<h2 id="step-2-submit-the-query">Step 2: Submit the Query</h2>
-
-<p>Having worked with a few APIs, I knew that the results it returned would be in JSON format (and the API documentation said as much). This means that, while the response would be a string, it would be collected into keys and values. So I pulled out Ruby’s JSON library to handle this heavy lifting. Similarly to Net::HTTP, you can get the JSON’s library’s deliciousness with the following line at the top of your code.</p>
-
-<p>require ‘json’</p>
-
-<p>With the URI built to the API’s spec and prepping for the JSON business, I could then submit the call to the API with the following method.</p>
-
-<p>def query</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>JSON.parse(Net::HTTP.get(self.build_uri))
+<span class="k">end</span>
 </code></pre>
 </div>
 
-<p>end
-By your silence, I can tell that reveal didn’t quite impress. Believe me when I say that single line method is actually doing quite a lot.</p>
+<p>I encapsulated the creation of the URI into a method. For my purposes, the URI method of the Net::HTTP library is simply being passed the NPI Registry’s API URL as a string. I broke the string up for better readability.</p>
 
-<p>Starting from the innermost parenthesis and working outward, the query method is calling self.build_uri. From Step 1 above, build_uri is the method I defined to “build” the URI object for the HTTP connection to the API.</p>
+<p>You’ll likely notice the “number=#{npi_number}” lines in the URL. I defined each of the API’s available search criteria as an attr_accessor of my class (“NpiDownload”). Ruby’s <a href="http://ruby-doc.org/core-2.0.0/Module.html#method-i-attr_accessor">attr_accessors</a> are a deeper topic for a future post but defining the criteria this way meant any of the criteria could be set by a simple assignment like the following line.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">NpiDownload</span><span class="p">.</span><span class="nf">postal_code</span> <span class="o">=</span> <span class="s2">"11111"</span>
+</code></pre>
+</div>
+
+<p>All that said, the build_uri method would return a URI object built from the following string.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">https</span><span class="ss">:/</span><span class="o">/</span><span class="n">npiregistry</span><span class="p">.</span><span class="nf">cms</span><span class="p">.</span><span class="nf">hhs</span><span class="p">.</span><span class="nf">gov</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="p">?</span><span class="n">number</span><span class="o">=&amp;</span><span class="n">enumeration_type</span><span class="o">=&amp;</span>
+<span class="n">taxonomy_description</span><span class="o">=&amp;</span><span class="n">first_name</span><span class="o">=&amp;</span><span class="n">last_name</span><span class="o">=&amp;</span><span class="n">organization_name</span><span class="o">=&amp;</span>
+<span class="n">address_purpose</span><span class="o">=&amp;</span><span class="n">city</span><span class="o">=&amp;</span><span class="n">state</span><span class="o">=&amp;</span><span class="n">postal_code</span><span class="o">=</span><span class="mi">11111</span><span class="o">&amp;</span><span class="n">country_code</span><span class="o">=&amp;</span><span class="n">limit</span><span class="o">=&amp;</span><span class="n">skip</span><span class="o">=</span>
+</code></pre>
+</div>
+
+<p>Now that we had our URI object, it could be used to make the connection and deal with whatever the API returned.</p>
+
+<h2 id="step-2-submit-the-query">Step 2: Submit the Query</h2>
+
+<p>Having worked with a few APIs, I knew that the results it returned would be in <a href="http://www.json.org/">JSON</a> format (and the API documentation said as much). This means that, while the response would be a string, it would be collected into keys and values. So I pulled out Ruby’s JSON library to handle this heavy lifting. Similarly to Net::HTTP, you can get the JSON’s library’s deliciousness with the following line at the top of your code.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'json'</span>
+</code></pre>
+</div>
+
+<p>With the URI built to the API’s spec and prepping for the JSON business, I could then submit the call to the API with the following method.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">query</span>
+
+    <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="nf">build_uri</span><span class="p">))</span>
+
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>By your silence, I can tell that reveal didn’t quite impress. Believe me when I say that single line method is actually doing quite a lot.</p>
+
+<p>Starting from the innermost parenthesis and working outward, the query method is calling “self.build_uri”. From Step 1 above, “build_uri” is the method I defined to “build” the URI object for the HTTP connection to the API.</p>
 
 <p>“What’s with the ‘self’ bit,” I hear you ask (or is that the voices again?). “self” is a whole topic in Object-Oriented Programming but without getting metaphysical, “self” is basically a method call on the currently instantiated object. So no matter how many instances of the “NpiDownload” object I create, query is always calling build_uri one the same instance on which query was called. Cool? Cool.</p>
 
@@ -304,7 +318,7 @@ By your silence, I can tell that reveal didn’t quite impress. Believe me when 
 
 <p>To be Continued…</p>
 
-<p>That’s enough jabber from me for one post. In the next post, I’ll talk about the third step is this little project and give a post mortem on the project as a whole. The source code can be found on my GitHub, if you can’t take the suspense. And, of course, leave any questions or comments below or feel free to hit me up on the Twitter.</p>
+<p>That’s enough jabber from me for one post. In the next post, I’ll talk about the third step is this little project and give a post mortem on the project as a whole. The source code can be found on my <a href="https://github.com/randalhumphries/npi_registry_download">GitHub</a>, if you can’t take the suspense. And, of course, leave any questions or comments below or feel free to hit me up on the <a href="https://twitter.com/randalmeister">Twitter</a>.</p>
 
 <p>Until next time, take care!</p>
 
