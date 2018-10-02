@@ -1,0 +1,17 @@
+/* Custom CSS - Randal Humphries */
+.profile-img {
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+}
+
+.section-divider {
+  color: #757575;
+  border-bottom: 1px solid #e0e0e0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path d="M9.4 3.6l5.1 6.9L19.5 3.6" fill="#bdbdbd"/></svg>') center right no-repeat
+}
+
+.hobby-button {
+  border-color: #42a5f5;
+  background-color: #42a5f5;
+}
